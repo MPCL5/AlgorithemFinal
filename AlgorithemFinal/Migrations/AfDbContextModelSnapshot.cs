@@ -19,6 +19,21 @@ namespace AlgorithemFinal.Migrations
                 .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("AlgorithemFinal.Models.Admin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Admins");
+                });
+
             modelBuilder.Entity("AlgorithemFinal.Models.Announcement", b =>
                 {
                     b.Property<int>("Id")
@@ -27,9 +42,10 @@ namespace AlgorithemFinal.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Message")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TimeTableId")
+                    b.Property<int>("TimeTableId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -50,6 +66,7 @@ namespace AlgorithemFinal.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Label")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -65,6 +82,7 @@ namespace AlgorithemFinal.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UnitsCount")
@@ -86,11 +104,36 @@ namespace AlgorithemFinal.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Label")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Days");
+                });
+
+            modelBuilder.Entity("AlgorithemFinal.Models.Master", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Masters");
+                });
+
+            modelBuilder.Entity("AlgorithemFinal.Models.Student", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("AlgorithemFinal.Models.TimeTable", b =>
@@ -100,10 +143,15 @@ namespace AlgorithemFinal.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("MasterId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
 
                     b.HasIndex("MasterId");
 
@@ -123,6 +171,9 @@ namespace AlgorithemFinal.Migrations
                     b.Property<int?>("DayId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MasterId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("TimeTableId")
                         .HasColumnType("int");
 
@@ -131,6 +182,8 @@ namespace AlgorithemFinal.Migrations
                     b.HasIndex("BellId");
 
                     b.HasIndex("DayId");
+
+                    b.HasIndex("MasterId");
 
                     b.HasIndex("TimeTableId");
 
@@ -144,6 +197,9 @@ namespace AlgorithemFinal.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("AdminId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
@@ -153,31 +209,71 @@ namespace AlgorithemFinal.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("MasterId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Rule")
+                    b.Property<int?>("StudentId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AdminId")
+                        .IsUnique()
+                        .HasFilter("[AdminId] IS NOT NULL");
+
+                    b.HasIndex("MasterId")
+                        .IsUnique()
+                        .HasFilter("[MasterId] IS NOT NULL");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique()
+                        .HasFilter("[StudentId] IS NOT NULL");
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("StudentTimeTable", b =>
+                {
+                    b.Property<int>("StudentsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeTablesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentsId", "TimeTablesId");
+
+                    b.HasIndex("TimeTablesId");
+
+                    b.ToTable("StudentTimeTable");
                 });
 
             modelBuilder.Entity("AlgorithemFinal.Models.Announcement", b =>
                 {
                     b.HasOne("AlgorithemFinal.Models.TimeTable", "TimeTable")
                         .WithMany()
-                        .HasForeignKey("TimeTableId");
+                        .HasForeignKey("TimeTableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("TimeTable");
                 });
 
             modelBuilder.Entity("AlgorithemFinal.Models.TimeTable", b =>
                 {
-                    b.HasOne("AlgorithemFinal.Models.User", "Master")
-                        .WithMany()
+                    b.HasOne("AlgorithemFinal.Models.Course", "Course")
+                        .WithMany("TimeTables")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AlgorithemFinal.Models.Master", "Master")
+                        .WithMany("TimeTables")
                         .HasForeignKey("MasterId");
+
+                    b.Navigation("Course");
 
                     b.Navigation("Master");
                 });
@@ -192,6 +288,10 @@ namespace AlgorithemFinal.Migrations
                         .WithMany()
                         .HasForeignKey("DayId");
 
+                    b.HasOne("AlgorithemFinal.Models.Master", null)
+                        .WithMany("TimeTableBells")
+                        .HasForeignKey("MasterId");
+
                     b.HasOne("AlgorithemFinal.Models.TimeTable", "TimeTable")
                         .WithMany("TimeTableBells")
                         .HasForeignKey("TimeTableId");
@@ -201,6 +301,66 @@ namespace AlgorithemFinal.Migrations
                     b.Navigation("Day");
 
                     b.Navigation("TimeTable");
+                });
+
+            modelBuilder.Entity("AlgorithemFinal.Models.User", b =>
+                {
+                    b.HasOne("AlgorithemFinal.Models.Admin", "Admin")
+                        .WithOne("User")
+                        .HasForeignKey("AlgorithemFinal.Models.User", "AdminId");
+
+                    b.HasOne("AlgorithemFinal.Models.Master", "Master")
+                        .WithOne("User")
+                        .HasForeignKey("AlgorithemFinal.Models.User", "MasterId");
+
+                    b.HasOne("AlgorithemFinal.Models.Student", "Student")
+                        .WithOne("User")
+                        .HasForeignKey("AlgorithemFinal.Models.User", "StudentId");
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("Master");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("StudentTimeTable", b =>
+                {
+                    b.HasOne("AlgorithemFinal.Models.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AlgorithemFinal.Models.TimeTable", null)
+                        .WithMany()
+                        .HasForeignKey("TimeTablesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AlgorithemFinal.Models.Admin", b =>
+                {
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AlgorithemFinal.Models.Course", b =>
+                {
+                    b.Navigation("TimeTables");
+                });
+
+            modelBuilder.Entity("AlgorithemFinal.Models.Master", b =>
+                {
+                    b.Navigation("TimeTableBells");
+
+                    b.Navigation("TimeTables");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AlgorithemFinal.Models.Student", b =>
+                {
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AlgorithemFinal.Models.TimeTable", b =>

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace AlgorithemFinal.Models
 {
-    public class Day
+    public class Master
     {
         public int Id { get; set; }
 
-        [Required]
-        public string Label { get; set; }
+        public User User { get; set; }
 
-        public int DayOfWeek { get; set; }
+        public List<TimeTableBell> TimeTableBells { get; set; }
+        public List<TimeTable> TimeTables { get; set; }
     }
 }

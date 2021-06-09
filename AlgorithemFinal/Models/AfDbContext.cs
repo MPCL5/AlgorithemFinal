@@ -23,5 +23,26 @@ namespace AlgorithemFinal.Models
         public virtual DbSet<TimeTable> TimeTables { get; set; }
         public virtual DbSet<TimeTableBell> TimeTableBells { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Admin> Admins { get; set; }
+        public virtual DbSet<Master> Masters { get; set; }
+        public virtual DbSet<Student> Students { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Admin>()
+                .HasOne(p => p.User)
+                .WithOne(p => p.Admin)
+                .HasForeignKey<User>(p => p.AdminId);
+
+            modelBuilder.Entity<Master>()
+               .HasOne(p => p.User)
+               .WithOne(p => p.Master)
+               .HasForeignKey<User>(p => p.MasterId);
+
+            modelBuilder.Entity<Student>()
+               .HasOne(p => p.User)
+               .WithOne(p => p.Student)
+               .HasForeignKey<User>(p => p.StudentId);
+        }
     }
 }
