@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AlgorithemFinal.Models;
+using AlgorithemFinal.Utiles;
+using AlgorithemFinal.Services;
 
 namespace AlgorithemFinal
 {
@@ -37,6 +39,9 @@ namespace AlgorithemFinal
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AlgorithemFinal", Version = "v1" });
             });
+
+            services.Configure<ComponentConfig>(Configuration.GetSection("ComponentConfig"));
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,9 +54,17 @@ namespace AlgorithemFinal
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AlgorithemFinal v1"));
             }
 
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

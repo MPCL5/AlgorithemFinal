@@ -6,25 +6,38 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AlgorithemFinal.Models;
+using AlgorithemFinal.Utiles;
+using AlgorithemFinal.Services;
+using AlgorithemFinal.Utiles.Pagination;
+using AlgorithemFinal.Utiles.Extensions;
 
 namespace AlgorithemFinal.Controllers
 {
+    [Authorize(Policy = new string[] { nameof(Admin) })]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : ControllerExtension
     {
         private readonly AfDbContext _context;
+        private readonly IUserService _userService;
 
-        public UsersController(AfDbContext context)
+        public UsersController(AfDbContext context, IUserService userService)
         {
+            _userService = userService;
             _context = context;
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<PaginatedResult<User>>> GetUsers(
+                [FromQuery] string search,
+                [FromQuery] PaginationParams pagination
+            )
         {
-            return await _context.Users.ToListAsync();
+            var result = _context.Users.AsNoTracking();
+
+            var data = await PaginatedList<User>.CreateAsync(result, pagination.Page, pagination.PageSize);
+            return Ok(data.Result);
         }
 
         // GET: api/Users/5
