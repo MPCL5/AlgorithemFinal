@@ -6,12 +6,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AlgorithemFinal.Models;
+using AlgorithemFinal.Models.Requests;
+using AlgorithemFinal.Utiles.Extensions;
+using AlgorithemFinal.Utiles.Pagination;
 
 namespace AlgorithemFinal.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DaysController : ControllerBase
+    public class DaysController : ControllerExtension
     {
         private readonly AfDbContext _context;
 
@@ -22,9 +25,12 @@ namespace AlgorithemFinal.Controllers
 
         // GET: api/Days
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Day>>> GetDays()
+        public async Task<ActionResult<PaginatedResult<Day>>> GetDays(
+                [FromQuery] PaginationParams pagination
+            )
         {
-            return await _context.Days.ToListAsync();
+            //return await _context.Days.ToListAsync();
+            return Ok();
         }
 
         // GET: api/Days/5
@@ -44,12 +50,12 @@ namespace AlgorithemFinal.Controllers
         // PUT: api/Days/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDay(int id, Day day)
+        public async Task<IActionResult> PutDay(int id, [FromBody] DayRequest day)
         {
-            if (id != day.Id)
-            {
-                return BadRequest();
-            }
+            //if (id != day.Id)
+            //{
+            //    return BadRequest();
+            //}
 
             _context.Entry(day).State = EntityState.Modified;
 
@@ -75,12 +81,12 @@ namespace AlgorithemFinal.Controllers
         // POST: api/Days
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Day>> PostDay(Day day)
+        public async Task<ActionResult<Day>> PostDay([FromBody] DayRequest day)
         {
-            _context.Days.Add(day);
-            await _context.SaveChangesAsync();
+            //_context.Days.Add(new Day() { DayOfWeek});
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDay", new { id = day.Id }, day);
+            return Ok();
         }
 
         // DELETE: api/Days/5

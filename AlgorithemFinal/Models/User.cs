@@ -24,7 +24,19 @@ namespace AlgorithemFinal.Models
         public string Code { get; set; }
 
         [NotMapped]
-        public int Rule { get; set; }
+        public string Rule {
+            get
+            {
+                if (this.Master != null)
+                    return nameof(Master).ToLower();
+                else if (this.Admin != null)
+                    return nameof(Admin).ToLower();
+                else if (this.Student != null)
+                    return nameof(Student).ToLower();
+                else
+                    return "unknown";
+            }
+        }
 
         [JsonIgnore]
         public int? MasterId { get; set; }

@@ -10,24 +10,25 @@ using AlgorithemFinal.Utiles;
 using AlgorithemFinal.Services;
 using AlgorithemFinal.Utiles.Pagination;
 using AlgorithemFinal.Utiles.Extensions;
+using AlgorithemFinal.Models.Requests;
 
 namespace AlgorithemFinal.Controllers
 {
-    [Authorize(Policy = new string[] { nameof(Admin) })]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerExtension
     {
         private readonly AfDbContext _context;
-        private readonly IUserService _userService;
+        private readonly HttpContext _httpContext;
 
-        public UsersController(AfDbContext context, IUserService userService)
+        public UsersController(AfDbContext context, HttpContext httpContext)
         {
-            _userService = userService;
+            _httpContext = httpContext;
             _context = context;
         }
 
         // GET: api/Users
+        [Authorize(Policy = new string[] { nameof(Admin) })]
         [HttpGet]
         public async Task<ActionResult<PaginatedResult<User>>> GetUsers(
                 [FromQuery] string search,
@@ -41,6 +42,7 @@ namespace AlgorithemFinal.Controllers
         }
 
         // GET: api/Users/5
+        [Authorize(Policy = new string[] { nameof(Admin) })]
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -54,8 +56,53 @@ namespace AlgorithemFinal.Controllers
             return user;
         }
 
+
+        [Authorize]
+        [HttpGet("Profile")]
+        public ActionResult<User> GetUserProfile()
+        {
+            var user = (User)_httpContext.Items["User"];
+
+            return Ok(user);
+        }
+
+        [Authorize]
+        [HttpPost("Profile")]
+        public ActionResult<User> PostUserProfile(
+                [FromBody] ProfileRequest model
+            )
+        {
+            var user = (User)_httpContext.Items["User"];
+
+            return Ok(user);
+        }
+
+        [Authorize]
+        [HttpPost("Profile/ChangePassword")]
+        public IActionResult PostUserProfileChangePassword(
+                [FromBody] ProfilePasswordRequest request
+            )
+        {
+            var user = (User)_httpContext.Items["User"];
+
+            return Ok();
+        }
+        
+        //[Authorize]
+        //[HttpPost("ChangePassword")]
+        //public async Task<IActionResult> PostUserProfileChangePassword(
+        //        [FromBody] string CurrentPassword,
+        //        [FromBody] string NewPassword
+        //    )
+        //{
+        //    //var user = (User)_httpContext.Items["User"];
+
+        //    return Ok();
+        //}
+
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Policy = new string[] { nameof(Admin) })]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
@@ -87,6 +134,7 @@ namespace AlgorithemFinal.Controllers
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Policy = new string[] { nameof(Admin) })]
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
@@ -97,6 +145,7 @@ namespace AlgorithemFinal.Controllers
         }
 
         // DELETE: api/Users/5
+        [Authorize(Policy = new string[] { nameof(Admin) })]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

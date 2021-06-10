@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AlgorithemFinal.Models
@@ -20,7 +21,14 @@ namespace AlgorithemFinal.Models
         [Required]
         public Bell Bell { get; set; }
 
+        public int CourseId { get; set; }
+
+        [JsonIgnore]
+        public Course Course { get; set; }
+
         //public int? TimeTableId { get; set; }
+
+        //[JsonIgnore]
         public TimeTable TimeTable { get; set; }
     }
 }

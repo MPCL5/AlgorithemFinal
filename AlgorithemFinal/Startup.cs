@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using AlgorithemFinal.Models;
 using AlgorithemFinal.Utiles;
 using AlgorithemFinal.Services;
+using System.Reflection;
+using System.IO;
 
 namespace AlgorithemFinal
 {
@@ -100,9 +102,9 @@ namespace AlgorithemFinal
                     }
                 });
 
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //options.IncludeXmlComments(xmlPath);
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
             });
         }
     }

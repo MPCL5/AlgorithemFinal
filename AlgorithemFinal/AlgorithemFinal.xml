@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AlgorithemFinal</name>
+    </assembly>
+    <members>
+        <member name="M:AlgorithemFinal.Controllers.TimeTablesController.GetTimeTable(System.Int32)">
+            <summary>
+            با این Api قراره فقط حال کنیم
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="P:AlgorithemFinal.Models.Requests.TimeTableBellRequest.DayId">
+            <summary>
+            id rouz
+            </summary>
+        </member>
+        <member name="P:AlgorithemFinal.Models.Requests.TimeTableBellRequest.BellId">
+            <summary>
+            id zang
+            </summary>
+        </member>
+        <member name="P:AlgorithemFinal.Models.Requests.TimeTableBellRequest.CourseId">
+            <summary>
+            id dars
+            </summary>
+        </member>
+        <member name="P:AlgorithemFinal.Utiles.Pagination.PaginationParams.PageSize">
+            <summary>
+            تعداد آیتم های موجود در صفحه
+            </summary>
+        </member>
+        <member name="P:AlgorithemFinal.Utiles.Pagination.PaginationParams.Page">
+            <summary>
+            شماره صفحه
+            </summary>
+        </member>
+    </members>
+</doc>

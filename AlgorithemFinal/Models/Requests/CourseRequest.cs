@@ -2,21 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace AlgorithemFinal.Models
+namespace AlgorithemFinal.Models.Requests
 {
-    public class Course
+    public class CourseRequest
     {
-        public int Id { get; set; }
-
         [Required]
         public string Title { get; set; }
 
         public int UnitsCount { get; set; }
-
-        [JsonIgnore]
-        public ICollection<TimeTable> TimeTables { get; set; }
     }
 }

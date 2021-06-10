@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AlgorithemFinal.Models
@@ -16,8 +17,10 @@ namespace AlgorithemFinal.Models
         //[Required]
         public Master Master { get; set; }
 
+        [JsonIgnore]
         public ICollection<Student> Students { get; set; }
 
+        [JsonIgnore]
         public ICollection<TimeTableBell> TimeTableBells { get; set; }
 
         //[Required]

@@ -6,12 +6,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AlgorithemFinal.Models;
+using AlgorithemFinal.Utiles.Extensions;
+using AlgorithemFinal.Models.Requests;
+using AlgorithemFinal.Utiles.Pagination;
 
 namespace AlgorithemFinal.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TimeTableBellsController : ControllerBase
+    public class TimeTableBellsController : ControllerExtension
     {
         private readonly AfDbContext _context;
 
@@ -22,9 +25,12 @@ namespace AlgorithemFinal.Controllers
 
         // GET: api/TimeTableBells
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TimeTableBell>>> GetTimeTableBells()
+        public async Task<ActionResult<PaginatedResult<TimeTableBell>>> GetTimeTableBells(
+                [FromQuery] PaginationParams pagination
+            )
         {
-            return await _context.TimeTableBells.ToListAsync();
+            // return await _context.TimeTableBells.ToListAsync();
+            return Ok();
         }
 
         // GET: api/TimeTableBells/5
@@ -44,12 +50,12 @@ namespace AlgorithemFinal.Controllers
         // PUT: api/TimeTableBells/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTimeTableBell(int id, TimeTableBell timeTableBell)
+        public async Task<IActionResult> PutTimeTableBell(int id, [FromBody] TimeTableBellRequest timeTableBell)
         {
-            if (id != timeTableBell.Id)
-            {
-                return BadRequest();
-            }
+            //if (id != timeTableBell.Id)
+            //{
+            //    return BadRequest();
+            //}
 
             _context.Entry(timeTableBell).State = EntityState.Modified;
 
@@ -75,12 +81,13 @@ namespace AlgorithemFinal.Controllers
         // POST: api/TimeTableBells
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TimeTableBell>> PostTimeTableBell(TimeTableBell timeTableBell)
+        public async Task<ActionResult<TimeTableBell>> PostTimeTableBell([FromBody] TimeTableBellRequest timeTableBell)
         {
-            _context.TimeTableBells.Add(timeTableBell);
-            await _context.SaveChangesAsync();
+            //_context.TimeTableBells.Add(timeTableBell);
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTimeTableBell", new { id = timeTableBell.Id }, timeTableBell);
+            //return CreatedAtAction("GetTimeTableBell", new { id = timeTableBell.Id }, timeTableBell);
+            return Ok();
         }
 
         // DELETE: api/TimeTableBells/5

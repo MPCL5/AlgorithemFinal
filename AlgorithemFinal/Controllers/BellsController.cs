@@ -6,12 +6,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AlgorithemFinal.Models;
+using AlgorithemFinal.Utiles.Extensions;
+using AlgorithemFinal.Models.Requests;
+using AlgorithemFinal.Utiles.Pagination;
 
 namespace AlgorithemFinal.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BellsController : ControllerBase
+    public class BellsController : ControllerExtension
     {
         private readonly AfDbContext _context;
 
@@ -22,9 +25,12 @@ namespace AlgorithemFinal.Controllers
 
         // GET: api/Bells
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bell>>> GetBells()
+        public async Task<ActionResult<PaginatedResult<Bell>>> GetBells(
+                [FromQuery] PaginationParams pagination
+            )
         {
-            return await _context.Bells.ToListAsync();
+            // return await _context.Bells.ToListAsync();
+            return Ok();
         }
 
         // GET: api/Bells/5
@@ -44,12 +50,12 @@ namespace AlgorithemFinal.Controllers
         // PUT: api/Bells/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBell(int id, Bell bell)
+        public async Task<IActionResult> PutBell(int id, [FromBody] BellRequest bell)
         {
-            if (id != bell.Id)
-            {
-                return BadRequest();
-            }
+            //if (id != bell.Id)
+            //{
+            //    return BadRequest();
+            //}
 
             _context.Entry(bell).State = EntityState.Modified;
 
@@ -75,12 +81,13 @@ namespace AlgorithemFinal.Controllers
         // POST: api/Bells
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Bell>> PostBell(Bell bell)
+        public async Task<ActionResult<Bell>> PostBell([FromBody] BellRequest bell)
         {
-            _context.Bells.Add(bell);
-            await _context.SaveChangesAsync();
+            //_context.Bells.Add(bell);
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBell", new { id = bell.Id }, bell);
+            //return CreatedAtAction("GetBell", new { id = bell.Id }, bell);
+            return Ok();
         }
 
         // DELETE: api/Bells/5
