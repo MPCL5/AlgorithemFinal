@@ -20,11 +20,11 @@ namespace AlgorithemFinal.Models.Requests
         [Required]
         public int BellId { get; set; }
 
-        /// <summary>
-        /// id dars
-        /// </summary>
-        [Required]
-        public int CourseId { get; set; }
+        ///// <summary>
+        ///// id dars
+        ///// </summary>
+        //[Required]
+        //public int CourseId { get; set; }
 
         public int TimeTableId { get; set; }
     }

@@ -15,7 +15,11 @@ namespace AlgorithemFinal.Models
 
         [JsonIgnore]
         public List<TimeTableBell> TimeTableBells { get; set; }
+
         [JsonIgnore]
         public List<TimeTable> TimeTables { get; set; }
+
+        [JsonIgnore]
+        public List<Course> Courses { get; set; }
     }
 }

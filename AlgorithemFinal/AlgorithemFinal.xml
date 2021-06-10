@@ -4,11 +4,49 @@
         <name>AlgorithemFinal</name>
     </assembly>
     <members>
-        <member name="M:AlgorithemFinal.Controllers.TimeTablesController.GetTimeTable(System.Int32)">
+        <member name="M:AlgorithemFinal.Controllers.CoursesController.GetCourseTimeTable(System.Int32,AlgorithemFinal.Utiles.Pagination.PaginationParams)">
             <summary>
-            با این Api قراره فقط حال کنیم
+            barname zamnie dars haei ke ba id hastano bar migardoune
             </summary>
             <param name="id"></param>
+            <param name="pagination"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.CoursesController.GetCourseMasters(System.Int32,AlgorithemFinal.Utiles.Pagination.PaginationParams)">
+            <summary>
+            ostad haei ke bara in dars hastano barmigardoune
+            </summary>
+            <param name="id"></param>
+            <param name="pagination"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.CoursesController.PostChooseCourse(System.Int32)">
+            <summary>
+            baraye entexab kardane dar baraye eraye tavassote ostad. id ostad ro az middlware auth migirin
+            </summary>
+            <param name="id">id dars</param>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.TimeTablesController.GetTimeTables(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},AlgorithemFinal.Utiles.Pagination.PaginationParams)">
+            <summary>
+            
+            </summary>
+            <param name="StudentId">id daneshju</param>
+            <param name="CourseId">id dars</param>
+            <param name="MasterId">id ostad</param>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.TimeTablesController.PostChooseTimeTable">
+            <summary>
+            ba in API student miad entexab mikone ino. albatte id student az middlware auth miad.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.TimeTablesController.PostStartProcess(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="maxClassPerBell">tedad class haye mojoud dar daneshkade</param>
             <returns></returns>
         </member>
         <member name="P:AlgorithemFinal.Models.Requests.TimeTableBellRequest.DayId">
@@ -19,11 +57,6 @@
         <member name="P:AlgorithemFinal.Models.Requests.TimeTableBellRequest.BellId">
             <summary>
             id zang
-            </summary>
-        </member>
-        <member name="P:AlgorithemFinal.Models.Requests.TimeTableBellRequest.CourseId">
-            <summary>
-            id dars
             </summary>
         </member>
         <member name="P:AlgorithemFinal.Utiles.Pagination.PaginationParams.PageSize">

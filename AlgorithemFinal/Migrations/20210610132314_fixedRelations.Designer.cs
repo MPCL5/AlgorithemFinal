@@ -4,14 +4,16 @@ using AlgorithemFinal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AlgorithemFinal.Migrations
 {
     [DbContext(typeof(AfDbContext))]
-    partial class AfDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210610132314_fixedRelations")]
+    partial class fixedRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

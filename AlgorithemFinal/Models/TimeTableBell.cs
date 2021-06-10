@@ -21,10 +21,10 @@ namespace AlgorithemFinal.Models
         [Required]
         public Bell Bell { get; set; }
 
-        public int CourseId { get; set; }
+        //public int CourseId { get; set; }
 
-        [JsonIgnore]
-        public Course Course { get; set; }
+        //[JsonIgnore]
+        //public Course Course { get; set; }
 
         //public int? TimeTableId { get; set; }
 

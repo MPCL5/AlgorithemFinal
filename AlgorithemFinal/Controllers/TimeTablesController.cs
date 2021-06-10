@@ -22,20 +22,27 @@ namespace AlgorithemFinal.Controllers
             _context = context;
         }
 
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="StudentId">id daneshju</param>
+        /// <param name="CourseId">id dars</param>
+        /// <param name="MasterId">id ostad</param>
+        /// <returns></returns>
         // GET: api/TimeTables
         [HttpGet]
-        public async Task<ActionResult<PaginatedResult<TimeTable>>> GetTimeTables([FromQuery] PaginationParams pagination)
+        public async Task<ActionResult<PaginatedResult<TimeTable>>> GetTimeTables(
+                [FromQuery] int? StudentId,
+                [FromQuery] int? CourseId,
+                [FromQuery] int? MasterId,
+                [FromQuery] PaginationParams pagination
+            )
         {
             // await _context.TimeTables.ToListAsync();
             return Ok();
         }
 
-        /// <summary>
-        /// با این Api قراره فقط حال کنیم
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         // GET: api/TimeTables/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TimeTable>> GetTimeTable(int id)
@@ -50,62 +57,28 @@ namespace AlgorithemFinal.Controllers
             return timeTable;
         }
 
-        // PUT: api/TimeTables/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTimeTable(int id, TimeTable timeTable)
+        /// <summary>
+        /// ba in API student miad entexab mikone ino. albatte id student az middlware auth miad.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("{id}/Choose")]
+        public async Task<IActionResult> PostChooseTimeTable()
         {
-            if (id != timeTable.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(timeTable).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TimeTableExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(msg: "afarin bar shoma");
         }
 
-        // POST: api/TimeTables
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<TimeTable>> PostTimeTable(TimeTable timeTable)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="maxClassPerBell">tedad class haye mojoud dar daneshkade</param>
+        /// <returns></returns>
+        [HttpPost("StartProcess")]
+        public async Task<IActionResult> PostStartProcess(
+                [FromQuery] int maxClassPerBell
+            )
         {
-            _context.TimeTables.Add(timeTable);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTimeTable", new { id = timeTable.Id }, timeTable);
-        }
-
-        // DELETE: api/TimeTables/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTimeTable(int id)
-        {
-            var timeTable = await _context.TimeTables.FindAsync(id);
-            if (timeTable == null)
-            {
-                return NotFound();
-            }
-
-            _context.TimeTables.Remove(timeTable);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok();
         }
 
         private bool TimeTableExists(int id)

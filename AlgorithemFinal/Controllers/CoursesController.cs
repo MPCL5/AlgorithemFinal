@@ -47,10 +47,33 @@ namespace AlgorithemFinal.Controllers
 
             return course;
         }
-        
-        // GET: api/Courses/5
+
+        /// <summary>
+        /// barname zamnie dars haei ke ba id hastano bar migardoune
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="pagination"></param>
+        /// <returns></returns>
+        // GET: api/Courses/5/TimeTables
         [HttpGet("{id}/TimeTables")]
         public async Task<ActionResult<PaginatedResult<TimeTable>>> GetCourseTimeTable(
+                int id,
+                [FromQuery] PaginationParams pagination
+            )
+        {
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// ostad haei ke bara in dars hastano barmigardoune
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="pagination"></param>
+        /// <returns></returns>
+        // GET: api/Courses/5/Masters
+        [HttpGet("{id}/Masters")]
+        public async Task<ActionResult<PaginatedResult<Master>>> GetCourseMasters(
                 int id,
                 [FromQuery] PaginationParams pagination
             )
@@ -99,6 +122,17 @@ namespace AlgorithemFinal.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCourse", new { id = course.Id }, course);
+        }
+
+        /// <summary>
+        /// baraye entexab kardane dar baraye eraye tavassote ostad. id ostad ro az middlware auth migirin
+        /// </summary>
+        /// <param name="id">id dars</param>
+        /// <returns></returns>
+        [HttpPost("{id}/Choose")]
+        public async Task<IActionResult> PostChooseCourse(int id)
+        {
+            return Ok();
         }
 
         // DELETE: api/Courses/5

@@ -18,5 +18,8 @@ namespace AlgorithemFinal.Models
 
         [JsonIgnore]
         public ICollection<TimeTable> TimeTables { get; set; }
+
+        [JsonIgnore]
+        public ICollection<Master> Masters { get; set; }
     }
 }

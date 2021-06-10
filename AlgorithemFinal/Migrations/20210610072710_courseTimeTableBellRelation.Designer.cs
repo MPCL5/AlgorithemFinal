@@ -4,14 +4,16 @@ using AlgorithemFinal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AlgorithemFinal.Migrations
 {
     [DbContext(typeof(AfDbContext))]
-    partial class AfDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210610072710_courseTimeTableBellRelation")]
+    partial class courseTimeTableBellRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,6 +170,9 @@ namespace AlgorithemFinal.Migrations
                     b.Property<int?>("BellId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("DayId")
                         .HasColumnType("int");
 
@@ -180,6 +185,8 @@ namespace AlgorithemFinal.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BellId");
+
+                    b.HasIndex("CourseId");
 
                     b.HasIndex("DayId");
 
@@ -237,21 +244,6 @@ namespace AlgorithemFinal.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CourseMaster", b =>
-                {
-                    b.Property<int>("CoursesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MastersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CoursesId", "MastersId");
-
-                    b.HasIndex("MastersId");
-
-                    b.ToTable("CourseMaster");
-                });
-
             modelBuilder.Entity("StudentTimeTable", b =>
                 {
                     b.Property<int>("StudentsId")
@@ -301,6 +293,12 @@ namespace AlgorithemFinal.Migrations
                         .WithMany()
                         .HasForeignKey("BellId");
 
+                    b.HasOne("AlgorithemFinal.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("AlgorithemFinal.Models.Day", "Day")
                         .WithMany()
                         .HasForeignKey("DayId");
@@ -314,6 +312,8 @@ namespace AlgorithemFinal.Migrations
                         .HasForeignKey("TimeTableId");
 
                     b.Navigation("Bell");
+
+                    b.Navigation("Course");
 
                     b.Navigation("Day");
 
@@ -339,21 +339,6 @@ namespace AlgorithemFinal.Migrations
                     b.Navigation("Master");
 
                     b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("CourseMaster", b =>
-                {
-                    b.HasOne("AlgorithemFinal.Models.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AlgorithemFinal.Models.Master", null)
-                        .WithMany()
-                        .HasForeignKey("MastersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("StudentTimeTable", b =>
