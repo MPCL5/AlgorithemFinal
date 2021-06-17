@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlgorithemFinal.Migrations
 {
     [DbContext(typeof(AfDbContext))]
-    [Migration("20210610132314_fixedRelations")]
-    partial class fixedRelations
+    [Migration("20210613090327_new")]
+    partial class @new
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

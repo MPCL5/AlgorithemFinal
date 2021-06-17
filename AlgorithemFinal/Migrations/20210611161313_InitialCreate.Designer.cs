@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlgorithemFinal.Migrations
 {
     [DbContext(typeof(AfDbContext))]
-    [Migration("20210609104930_initDb")]
-    partial class initDb
+    [Migration("20210611161313_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -203,6 +203,7 @@ namespace AlgorithemFinal.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
@@ -215,6 +216,7 @@ namespace AlgorithemFinal.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("StudentId")
@@ -235,6 +237,21 @@ namespace AlgorithemFinal.Migrations
                         .HasFilter("[StudentId] IS NOT NULL");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CourseMaster", b =>
+                {
+                    b.Property<int>("CoursesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MastersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CoursesId", "MastersId");
+
+                    b.HasIndex("MastersId");
+
+                    b.ToTable("CourseMaster");
                 });
 
             modelBuilder.Entity("StudentTimeTable", b =>
@@ -324,6 +341,21 @@ namespace AlgorithemFinal.Migrations
                     b.Navigation("Master");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("CourseMaster", b =>
+                {
+                    b.HasOne("AlgorithemFinal.Models.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CoursesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AlgorithemFinal.Models.Master", null)
+                        .WithMany()
+                        .HasForeignKey("MastersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("StudentTimeTable", b =>

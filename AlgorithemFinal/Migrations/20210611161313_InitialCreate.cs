@@ -2,7 +2,7 @@
 
 namespace AlgorithemFinal.Migrations
 {
-    public partial class initDb : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -86,6 +86,30 @@ namespace AlgorithemFinal.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CourseMaster",
+                columns: table => new
+                {
+                    CoursesId = table.Column<int>(type: "int", nullable: false),
+                    MastersId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseMaster", x => new { x.CoursesId, x.MastersId });
+                    table.ForeignKey(
+                        name: "FK_CourseMaster_Courses_CoursesId",
+                        column: x => x.CoursesId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourseMaster_Masters_MastersId",
+                        column: x => x.MastersId,
+                        principalTable: "Masters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TimeTables",
                 columns: table => new
                 {
@@ -119,8 +143,8 @@ namespace AlgorithemFinal.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MasterId = table.Column<int>(type: "int", nullable: true),
                     AdminId = table.Column<int>(type: "int", nullable: true),
                     StudentId = table.Column<int>(type: "int", nullable: true)
@@ -238,6 +262,11 @@ namespace AlgorithemFinal.Migrations
                 column: "TimeTableId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CourseMaster_MastersId",
+                table: "CourseMaster",
+                column: "MastersId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StudentTimeTable_TimeTablesId",
                 table: "StudentTimeTable",
                 column: "TimeTablesId");
@@ -298,6 +327,9 @@ namespace AlgorithemFinal.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Announcements");
+
+            migrationBuilder.DropTable(
+                name: "CourseMaster");
 
             migrationBuilder.DropTable(
                 name: "StudentTimeTable");

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AlgorithemFinal.Models;
 using AlgorithemFinal.Utiles.Extensions;
 using AlgorithemFinal.Utiles.Pagination;
+using AlgorithemFinal.Models.Requests;
 
 namespace AlgorithemFinal.Controllers
 {
@@ -22,6 +23,12 @@ namespace AlgorithemFinal.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="search">قسمتی از نام</param>
+        /// <param name="unitCount">تعداد واحد</param>
+        /// <returns></returns>
         // GET: api/Courses
         [HttpGet]
         public async Task<ActionResult<PaginatedResult<Course>>> GetCourses(
@@ -49,9 +56,9 @@ namespace AlgorithemFinal.Controllers
         }
 
         /// <summary>
-        /// barname zamnie dars haei ke ba id hastano bar migardoune
+        /// برنامه زمانی درس هایی که این شناسه را دارند را برمیگرداند.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">شناسه</param>
         /// <param name="pagination"></param>
         /// <returns></returns>
         // GET: api/Courses/5/TimeTables
@@ -66,9 +73,9 @@ namespace AlgorithemFinal.Controllers
         }
 
         /// <summary>
-        /// ostad haei ke bara in dars hastano barmigardoune
+        /// استاد های درس با شناسه وارد شده را بر می پرداند
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">شناسه</param>
         /// <param name="pagination"></param>
         /// <returns></returns>
         // GET: api/Courses/5/Masters
@@ -85,12 +92,12 @@ namespace AlgorithemFinal.Controllers
         // PUT: api/Courses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCourse(int id, Course course)
+        public async Task<IActionResult> PutCourse(int id, CourseRequest course)
         {
-            if (id != course.Id)
-            {
-                return BadRequest();
-            }
+            //if (id != course.Id)
+            //{
+            //    return BadRequest();
+            //}
 
             _context.Entry(course).State = EntityState.Modified;
 
@@ -116,18 +123,19 @@ namespace AlgorithemFinal.Controllers
         // POST: api/Courses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Course>> PostCourse(Course course)
+        public async Task<ActionResult<Course>> PostCourse(CourseRequest course)
         {
-            _context.Courses.Add(course);
-            await _context.SaveChangesAsync();
+            //_context.Courses.Add(course);
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCourse", new { id = course.Id }, course);
+            //return CreatedAtAction("GetCourse", new { id = course.Id }, course);
+            return Ok();
         }
 
         /// <summary>
-        /// baraye entexab kardane dar baraye eraye tavassote ostad. id ostad ro az middlware auth migirin
+        /// استاد درس را برای ارایه انتخاب می کند. لازم که استاد را از طریق میدل ویر شناسایی کنید و از روی توکن
         /// </summary>
-        /// <param name="id">id dars</param>
+        /// <param name="id">شناسه درس</param>
         /// <returns></returns>
         [HttpPost("{id}/Choose")]
         public async Task<IActionResult> PostChooseCourse(int id)

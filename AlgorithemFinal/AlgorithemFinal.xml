@@ -4,49 +4,99 @@
         <name>AlgorithemFinal</name>
     </assembly>
     <members>
+        <member name="M:AlgorithemFinal.Controllers.CoursesController.GetCourses(System.String,System.Nullable{System.Int32},AlgorithemFinal.Utiles.Pagination.PaginationParams)">
+            <summary>
+            
+            </summary>
+            <param name="search">قسمتی از نام</param>
+            <param name="unitCount">تعداد واحد</param>
+            <returns></returns>
+        </member>
         <member name="M:AlgorithemFinal.Controllers.CoursesController.GetCourseTimeTable(System.Int32,AlgorithemFinal.Utiles.Pagination.PaginationParams)">
             <summary>
-            barname zamnie dars haei ke ba id hastano bar migardoune
+            برنامه زمانی درس هایی که این شناسه را دارند را برمیگرداند.
             </summary>
-            <param name="id"></param>
+            <param name="id">شناسه</param>
             <param name="pagination"></param>
             <returns></returns>
         </member>
         <member name="M:AlgorithemFinal.Controllers.CoursesController.GetCourseMasters(System.Int32,AlgorithemFinal.Utiles.Pagination.PaginationParams)">
             <summary>
-            ostad haei ke bara in dars hastano barmigardoune
+            استاد های درس با شناسه وارد شده را بر می پرداند
             </summary>
-            <param name="id"></param>
+            <param name="id">شناسه</param>
             <param name="pagination"></param>
             <returns></returns>
         </member>
         <member name="M:AlgorithemFinal.Controllers.CoursesController.PostChooseCourse(System.Int32)">
             <summary>
-            baraye entexab kardane dar baraye eraye tavassote ostad. id ostad ro az middlware auth migirin
+            استاد درس را برای ارایه انتخاب می کند. لازم که استاد را از طریق میدل ویر شناسایی کنید و از روی توکن
             </summary>
-            <param name="id">id dars</param>
+            <param name="id">شناسه درس</param>
             <returns></returns>
         </member>
         <member name="M:AlgorithemFinal.Controllers.TimeTablesController.GetTimeTables(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},AlgorithemFinal.Utiles.Pagination.PaginationParams)">
             <summary>
             
             </summary>
-            <param name="StudentId">id daneshju</param>
-            <param name="CourseId">id dars</param>
-            <param name="MasterId">id ostad</param>
+            <param name="StudentId">شناسه دانشجو</param>
+            <param name="CourseId">شناسه درس</param>
+            <param name="MasterId">شناسه استاد</param>
             <returns></returns>
         </member>
         <member name="M:AlgorithemFinal.Controllers.TimeTablesController.PostChooseTimeTable">
             <summary>
-            ba in API student miad entexab mikone ino. albatte id student az middlware auth miad.
+            دانشجو درس را برای ارایه انتخاب می کند. لازم که دانشجو را از طریق میدل ویر شناسایی کنید و از روی توکن
             </summary>
             <returns></returns>
         </member>
         <member name="M:AlgorithemFinal.Controllers.TimeTablesController.PostStartProcess(System.Int32)">
             <summary>
+            شروع به اجرای الگوریتم می کند.
+            </summary>
+            <param name="maxClassPerBell">تعداد کلاس های کوجود</param>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.UsersController.GetUsers(System.String,AlgorithemFinal.Utiles.Pagination.PaginationParams)">
+            <summary>
             
             </summary>
-            <param name="maxClassPerBell">tedad class haye mojoud dar daneshkade</param>
+            <param name="search">جستجو بر اساس نام کاربر (FirstName + LastName)</param>
+            <param name="pagination"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.UsersController.GetUserProfile">
+            <summary>
+            دیدن پروفایل شخص لاگین شده بدون شناسه
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.UsersController.PostUserProfile(AlgorithemFinal.Models.Requests.ProfileRequest)">
+            <summary>
+            ویرایش کردن پروفایل شخص لاگین شده بدون گرفتن شناسه
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.UsersController.PostUserProfileChangePassword(AlgorithemFinal.Models.Requests.ProfilePasswordRequest)">
+            <summary>
+            برای عوض کردن رمز عبور کاربر
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.UsersController.PostUser(AlgorithemFinal.Models.Requests.AddUserRequest)">
+            <summary>
+            برای اضافه کردن کاربر به صورت تکی
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AlgorithemFinal.Controllers.UsersController.PostUserRange(AlgorithemFinal.Models.Requests.AddUserRequest[])">
+            <summary>
+            برای اضافه کردن کاربر به صورت گروهی
+            </summary>
+            <param name="user"></param>
             <returns></returns>
         </member>
         <member name="P:AlgorithemFinal.Models.Requests.TimeTableBellRequest.DayId">
@@ -57,6 +107,16 @@
         <member name="P:AlgorithemFinal.Models.Requests.TimeTableBellRequest.BellId">
             <summary>
             id zang
+            </summary>
+        </member>
+        <member name="P:AlgorithemFinal.Models.User.Code">
+            <summary>
+            نام کاربری یا همان شماره دانشجویی
+            </summary>
+        </member>
+        <member name="P:AlgorithemFinal.Models.User.Rule">
+            <summary>
+            master | admin | student
             </summary>
         </member>
         <member name="P:AlgorithemFinal.Utiles.Pagination.PaginationParams.PageSize">

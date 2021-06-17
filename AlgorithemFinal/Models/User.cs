@@ -10,6 +10,7 @@ namespace AlgorithemFinal.Models
 {
     public class User
     {
+        [Key]
         public int Id { get; set; }
 
         public string LastName { get; set; }
@@ -20,9 +21,15 @@ namespace AlgorithemFinal.Models
         [JsonIgnore]
         public string Password { get; set; }
 
+        /// <summary>
+        /// نام کاربری یا همان شماره دانشجویی
+        /// </summary>
         [Required]
         public string Code { get; set; }
 
+        /// <summary>
+        /// master | admin | student
+        /// </summary>
         [NotMapped]
         public string Rule {
             get

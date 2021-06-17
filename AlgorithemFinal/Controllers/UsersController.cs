@@ -28,6 +28,12 @@ namespace AlgorithemFinal.Controllers
         }
 
         // GET: api/Users
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="search">جستجو بر اساس نام کاربر (FirstName + LastName)</param>
+        /// <param name="pagination"></param>
+        /// <returns></returns>
         [Authorize(Policy = new string[] { nameof(Admin) })]
         [HttpGet]
         public async Task<ActionResult<PaginatedResult<User>>> GetUsers(
@@ -57,6 +63,10 @@ namespace AlgorithemFinal.Controllers
         }
 
 
+        /// <summary>
+        /// دیدن پروفایل شخص لاگین شده بدون شناسه
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("Profile")]
         public ActionResult<User> GetUserProfile()
@@ -66,6 +76,11 @@ namespace AlgorithemFinal.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// ویرایش کردن پروفایل شخص لاگین شده بدون گرفتن شناسه
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("Profile")]
         public ActionResult<User> PostUserProfile(
@@ -77,6 +92,11 @@ namespace AlgorithemFinal.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// برای عوض کردن رمز عبور کاربر
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("Profile/ChangePassword")]
         public IActionResult PostUserProfileChangePassword(
@@ -88,17 +108,6 @@ namespace AlgorithemFinal.Controllers
             return Ok();
         }
         
-        //[Authorize]
-        //[HttpPost("ChangePassword")]
-        //public async Task<IActionResult> PostUserProfileChangePassword(
-        //        [FromBody] string CurrentPassword,
-        //        [FromBody] string NewPassword
-        //    )
-        //{
-        //    //var user = (User)_httpContext.Items["User"];
-
-        //    return Ok();
-        //}
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -133,15 +142,37 @@ namespace AlgorithemFinal.Controllers
         }
 
         // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// برای اضافه کردن کاربر به صورت تکی
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [Authorize(Policy = new string[] { nameof(Admin) })]
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        [HttpPost("Add")]
+        public async Task<ActionResult<User>> PostUser(AddUserRequest user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            //_context.Users.Add(user);
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            //return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return Ok();
+        }
+
+        // POST: api/Users
+        /// <summary>
+        /// برای اضافه کردن کاربر به صورت گروهی
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [Authorize(Policy = new string[] { nameof(Admin) })]
+        [HttpPost("AddList")]
+        public async Task<ActionResult<User>> PostUserRange(AddUserRequest[] user)
+        {
+            //_context.Users.Add(user);
+            //await _context.SaveChangesAsync();
+
+            //return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return Ok();
         }
 
         // DELETE: api/Users/5

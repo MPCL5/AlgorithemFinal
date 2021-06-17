@@ -26,9 +26,9 @@ namespace AlgorithemFinal.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="StudentId">id daneshju</param>
-        /// <param name="CourseId">id dars</param>
-        /// <param name="MasterId">id ostad</param>
+        /// <param name="StudentId">شناسه دانشجو</param>
+        /// <param name="CourseId">شناسه درس</param>
+        /// <param name="MasterId">شناسه استاد</param>
         /// <returns></returns>
         // GET: api/TimeTables
         [HttpGet]
@@ -58,7 +58,7 @@ namespace AlgorithemFinal.Controllers
         }
 
         /// <summary>
-        /// ba in API student miad entexab mikone ino. albatte id student az middlware auth miad.
+        /// دانشجو درس را برای ارایه انتخاب می کند. لازم که دانشجو را از طریق میدل ویر شناسایی کنید و از روی توکن
         /// </summary>
         /// <returns></returns>
         [HttpPost("{id}/Choose")]
@@ -69,9 +69,9 @@ namespace AlgorithemFinal.Controllers
 
 
         /// <summary>
-        /// 
+        /// شروع به اجرای الگوریتم می کند.
         /// </summary>
-        /// <param name="maxClassPerBell">tedad class haye mojoud dar daneshkade</param>
+        /// <param name="maxClassPerBell">تعداد کلاس های کوجود</param>
         /// <returns></returns>
         [HttpPost("StartProcess")]
         public async Task<IActionResult> PostStartProcess(

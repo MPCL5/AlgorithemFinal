@@ -54,35 +54,35 @@ namespace AlgorithemFinal.Controllers
 
         // PUT: api/Announcements/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Policy = new string[] { nameof(Admin), nameof(Master) })]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAnnouncement(int id, [FromBody] AnnouncementRequest announcement)
-        {
-            //if (id != announcement.Id)
-            //{
-            //    return BadRequest();
-            //}
+        //[Authorize(Policy = new string[] { nameof(Admin), nameof(Master) })]
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutAnnouncement(int id, [FromBody] AnnouncementRequest announcement)
+        //{
+        //    //if (id != announcement.Id)
+        //    //{
+        //    //    return BadRequest();
+        //    //}
 
-            _context.Entry(announcement).State = EntityState.Modified;
+        //    _context.Entry(announcement).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AnnouncementExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!AnnouncementExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // POST: api/Announcements
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
