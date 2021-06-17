@@ -28,7 +28,7 @@ namespace AlgorithemFinal.Models
 
         //public int? TimeTableId { get; set; }
 
-        //[JsonIgnore]
+        [JsonIgnore]
         public TimeTable TimeTable { get; set; }
     }
 }

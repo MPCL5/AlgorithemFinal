@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AlgorithemFinal.Models;
 using AlgorithemFinal.Utiles.Extensions;
 using AlgorithemFinal.Utiles.Pagination;
+using AlgorithemFinal.Models.Response;
 
 namespace AlgorithemFinal.Controllers
 {
@@ -45,7 +46,7 @@ namespace AlgorithemFinal.Controllers
 
         // GET: api/TimeTables/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TimeTable>> GetTimeTable(int id)
+        public async Task<ActionResult<TimeTableDeatilsResponse>> GetTimeTable(int id)
         {
             var timeTable = await _context.TimeTables.FindAsync(id);
 
@@ -54,7 +55,7 @@ namespace AlgorithemFinal.Controllers
                 return NotFound();
             }
 
-            return timeTable;
+            return new TimeTableDeatilsResponse() {  };
         }
 
         /// <summary>
