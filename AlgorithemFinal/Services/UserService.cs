@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace AlgorithemFinal.Services
 {
@@ -36,7 +37,9 @@ namespace AlgorithemFinal.Services
 
         public AuthResponse Authenticate(AuthRequest model)
         {
-            var user = _dbContext.Users.FirstOrDefault(x => x.Code == model.Code && x.Password == model.Password);
+            var user = _dbContext.Users
+                .Include(user => user.Admin)
+                .FirstOrDefault(x => x.Code == model.Code && x.Password == model.Password);
             //var user = _users.SingleOrDefault(x => x.Username == model.Username && x.Password == model.Password);
 
             // return null if user not found
@@ -55,11 +58,14 @@ namespace AlgorithemFinal.Services
 
         public User GetById(int id)
         {
-            return _dbContext.Users.FirstOrDefault(x => x.Id == id);
+            return _dbContext.Users
+                .Include(user => user.Admin)
+                .FirstOrDefault(x => x.Id == id);
         }
 
         private string GenerateJwtToken(User user)
         {
+            var userAdmin = user.Admin;
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_config.Jwt.SecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor

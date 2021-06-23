@@ -31,7 +31,7 @@ namespace AlgorithemFinal.Models
         /// master | admin | student
         /// </summary>
         [NotMapped]
-        public string Rule {
+        public string Role {
             get
             {
                 if (this.Master != null)

@@ -1,8 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AlgorithemFinal.Models
 {
@@ -29,20 +25,51 @@ namespace AlgorithemFinal.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Admin>()
-                .HasOne(p => p.User)
-                .WithOne(p => p.Admin)
-                .HasForeignKey<User>(p => p.AdminId);
+            modelBuilder.Entity<User>()
+                .HasOne(p => p.Admin)
+                .WithOne(p => p.User)
+                .HasForeignKey<Admin>(p => p.UserId);
+            
+            modelBuilder.Entity<User>()
+                .HasOne(p => p.Master)
+                .WithOne(p => p.User)
+                .HasForeignKey<Master>(p => p.UserId);
+            
+            modelBuilder.Entity<User>()
+                .HasOne(p => p.Student)
+                .WithOne(p => p.User)
+                .HasForeignKey<Student>(p => p.UserId);
+            
+            // modelBuilder.Entity<Admin>()
+            //     .HasOne(p => p.User)
+            //     .WithOne(p => p.Admin)
+            //     .HasForeignKey<User>(p => p.AdminId);
+            //
+            // modelBuilder.Entity<Master>()
+            //    .HasOne(p => p.User)
+            //    .WithOne(p => p.Master)
+            //    .HasForeignKey<User>(p => p.MasterId);
+            //
+            // modelBuilder.Entity<Student>()
+            //    .HasOne(p => p.User)
+            //    .WithOne(p => p.Student)
+            //    .HasForeignKey<User>(p => p.StudentId);
+            
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                Id = 1,
+                FirstName = "Masoud",
+                LastName = "Poorghaffar",
+                Code = "975361004",
+                Password = "test",
+                AdminId = 1
+            });
 
-            modelBuilder.Entity<Master>()
-               .HasOne(p => p.User)
-               .WithOne(p => p.Master)
-               .HasForeignKey<User>(p => p.MasterId);
-
-            modelBuilder.Entity<Student>()
-               .HasOne(p => p.User)
-               .WithOne(p => p.Student)
-               .HasForeignKey<User>(p => p.StudentId);
+            modelBuilder.Entity<Admin>().HasData(new Admin
+            {
+                Id = 1,
+                UserId = 1
+            });
         }
     }
 }

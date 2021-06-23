@@ -1,11 +1,9 @@
-﻿using AlgorithemFinal.Models.Requests;
+﻿using System.Threading.Tasks;
+using AlgorithemFinal.Models.Requests;
 using AlgorithemFinal.Models.Response;
+using AlgorithemFinal.Services;
 using AlgorithemFinal.Utiles.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AlgorithemFinal.Controllers
 {
@@ -13,10 +11,22 @@ namespace AlgorithemFinal.Controllers
     [ApiController]
     public class AuthController : ControllerExtension
     {
-        [HttpPost("Login")]
-        public async Task<ActionResult<AuthResponse>> PostLogin(AuthRequest request)
+        private readonly IUserService _userService;
+
+        public AuthController(IUserService userService)
         {
-            return Ok();
+            _userService = userService;
+        }
+
+        [HttpPost("Login")]
+        public async Task<ActionResult<AuthResponse>> PostLogin([FromBody] AuthRequest request)
+        {
+            var result = _userService.Authenticate(request);
+
+            if (result == null)
+                return BadRequest(msg: "incorrect username or password");
+            
+            return Ok(result);
         }
     }
 }

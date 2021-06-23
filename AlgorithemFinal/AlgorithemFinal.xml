@@ -114,7 +114,7 @@
             نام کاربری یا همان شماره دانشجویی
             </summary>
         </member>
-        <member name="P:AlgorithemFinal.Models.User.Rule">
+        <member name="P:AlgorithemFinal.Models.User.Role">
             <summary>
             master | admin | student
             </summary>

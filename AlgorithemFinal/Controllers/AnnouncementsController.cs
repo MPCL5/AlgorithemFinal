@@ -31,8 +31,9 @@ namespace AlgorithemFinal.Controllers
                 [FromQuery] int? MasterId,
                 [FromQuery] int? TimeTableId,
                 [FromQuery] PaginationParams pagination
-            )
+            )   
         {
+            
             //return await _context.Announcements.ToListAsync();
             return Ok();
         }
