@@ -11,6 +11,7 @@ using AlgorithemFinal.Services;
 using AlgorithemFinal.Utiles.Pagination;
 using AlgorithemFinal.Utiles.Extensions;
 using AlgorithemFinal.Models.Requests;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AlgorithemFinal.Controllers
 {
@@ -19,11 +20,11 @@ namespace AlgorithemFinal.Controllers
     public class UsersController : ControllerExtension
     {
         private readonly AfDbContext _context;
-        private readonly HttpContext _httpContext;
+        // private readonly HttpContext _httpContext;
 
-        public UsersController(AfDbContext context, HttpContext httpContext)
+        public UsersController(AfDbContext context)
         {
-            _httpContext = httpContext;
+            // _httpContext = httpContext;
             _context = context;
         }
 
@@ -62,7 +63,7 @@ namespace AlgorithemFinal.Controllers
             return user;
         }
 
-
+        // GET: api/Users/Profile
         /// <summary>
         /// دیدن پروفایل شخص لاگین شده بدون شناسه
         /// </summary>
@@ -71,11 +72,13 @@ namespace AlgorithemFinal.Controllers
         [HttpGet("Profile")]
         public ActionResult<User> GetUserProfile()
         {
-            var user = (User)_httpContext.Items["User"];
+            // var user = (User)_httpContext.Items["User"];
+            var user = (User) HttpContext.Items["User"];
 
             return Ok(user);
         }
 
+        // POST: api/Users/Profile
         /// <summary>
         /// ویرایش کردن پروفایل شخص لاگین شده بدون گرفتن شناسه
         /// </summary>
@@ -83,15 +86,36 @@ namespace AlgorithemFinal.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost("Profile")]
-        public ActionResult<User> PostUserProfile(
+        public async Task<ActionResult<User>> PostUserProfile(
                 [FromBody] ProfileRequest model
             )
         {
-            var user = (User)_httpContext.Items["User"];
+            var user = (User) HttpContext.Items["User"];
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            var newUser =_context.Users.Update(user);
+            
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(user.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return Ok(user);
         }
 
+        // POST: api/Users/Profile/ChangePassword
         /// <summary>
         /// برای عوض کردن رمز عبور کاربر
         /// </summary>
@@ -103,7 +127,7 @@ namespace AlgorithemFinal.Controllers
                 [FromBody] ProfilePasswordRequest request
             )
         {
-            var user = (User)_httpContext.Items["User"];
+            var user = (User) HttpContext.Items["User"];
 
             return Ok();
         }

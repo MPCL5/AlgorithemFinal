@@ -28,6 +28,9 @@ namespace AlgorithemFinal.Utiles
                 return;
             }
 
+            if (Policy == null)
+                return;
+
             if (!(user.Master != null && Policy.Contains(nameof(Master)) ||
                 user.Student != null && Policy.Contains(nameof(Student)) ||
                 user.Admin != null && Policy.Contains(nameof(Admin))
