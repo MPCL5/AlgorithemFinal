@@ -8,7 +8,7 @@ namespace AlgorithemFinal.Utiles.Pagination
     public class PaginatedResult<T>
     {
         public IEnumerable<T> List { get; set; }
-        public int PageSize { get; set; }
+        public int Count { get; set; }
         public int Page { get; set; }
         public int TotalPages { get; set; }
     }

@@ -1,47 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace AlgorithemFinal.Utiles.Pagination
 {
     public class PaginatedList<T> : List<T>
     {
-        public int PageIndex { get; private set; }
-        public int TotalPages { get; private set; }
-
         public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;
-            TotalPages = pageSize == -1 ? 1 : (int)Math.Ceiling(count / (double)pageSize);
+            TotalPages = pageSize == -1 ? 1 : (int) Math.Ceiling(count / (double) pageSize);
 
-            this.AddRange(items);
+            AddRange(items);
         }
 
-        public bool HasPreviousPage
-        {
-            get
-            {
-                return (PageIndex > 1);
-            }
-        }
+        public int PageIndex { get; }
+        public int TotalPages { get; }
 
-        public bool HasNextPage
-        {
-            get
-            {
-                return (PageIndex < TotalPages);
-            }
-        }
+        // public bool HasPreviousPage => PageIndex > 1;
+        //
+        // public bool HasNextPage => PageIndex < TotalPages;
 
-        public PaginatedResult<T> Result
-        {
-            get
-            {
-                return new PaginatedResult<T> { List = this, TotalPages = this.TotalPages, Page = this.PageIndex, PageSize = this.Count };
-            }
-        }
+        public PaginatedResult<T> Result => new()
+            {List = this, TotalPages = TotalPages, Page = PageIndex, Count = Count};
 
         public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
         {
@@ -49,7 +32,7 @@ namespace AlgorithemFinal.Utiles.Pagination
             if (pageIndex < 1)
                 pageIndex = 1;
 
-            if (pageSize < -1 || pageSize == 0)
+            if (pageSize is < -1 or 0)
                 pageSize = 10;
 
             if (pageSize != -1)

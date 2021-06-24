@@ -2,7 +2,7 @@
 
 namespace AlgorithemFinal.Migrations
 {
-    public partial class newModels : Migration
+    public partial class newMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -57,7 +57,7 @@ namespace AlgorithemFinal.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     MasterId = table.Column<int>(type: "int", nullable: true),
                     AdminId = table.Column<int>(type: "int", nullable: true),
                     StudentId = table.Column<int>(type: "int", nullable: true)
@@ -65,6 +65,7 @@ namespace AlgorithemFinal.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.UniqueConstraint("AlternateKey_Code", x => x.Code);
                 });
 
             migrationBuilder.CreateTable(
@@ -261,12 +262,32 @@ namespace AlgorithemFinal.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AdminId", "Code", "FirstName", "LastName", "MasterId", "Password", "StudentId" },
-                values: new object[] { 1, 1, "975361004", "Masoud", "Poorghaffar", null, "test", null });
+                values: new object[,]
+                {
+                    { 1, 1, "975361004", "مسعود", "پورغفار اقدم", null, "$2a$11$qMKWWpZvH7qOJwjFqcrMIO.F93tn0.Zm4ZPgf9gucrbDMLp/cgdSy", null },
+                    { 2, null, "965361004", "ریحانه", "زهرابی", 1, "$2a$11$HKkcFDNLL2bgZpPo2UxHcuZ.wksP1qzbNHt5tEGMk5ZDyqwrzKH2W", null },
+                    { 3, null, "985361004", "نرگس", "میرزایی", null, "$2a$11$SQPeuWLFLP3DPUsZO7mHMOsYiKgNvvP6/E3OXFDDOHpjBJuvRHvUC", 1 },
+                    { 4, null, "985361003", "طاها", "علیپور", null, "$2a$11$SFve9ALNggK1I19J35qpSu40QPobLf4KMLBFCLbvbCo.r8KuClSN6", 2 }
+                });
 
             migrationBuilder.InsertData(
                 table: "Admins",
                 columns: new[] { "Id", "UserId" },
                 values: new object[] { 1, 1 });
+
+            migrationBuilder.InsertData(
+                table: "Masters",
+                columns: new[] { "Id", "UserId" },
+                values: new object[] { 1, 2 });
+
+            migrationBuilder.InsertData(
+                table: "Students",
+                columns: new[] { "Id", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 3 },
+                    { 2, 4 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_UserId",

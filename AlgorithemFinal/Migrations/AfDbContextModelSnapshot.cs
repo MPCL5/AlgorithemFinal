@@ -138,6 +138,13 @@ namespace AlgorithemFinal.Migrations
                         .IsUnique();
 
                     b.ToTable("Masters");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("AlgorithemFinal.Models.Student", b =>
@@ -156,6 +163,18 @@ namespace AlgorithemFinal.Migrations
                         .IsUnique();
 
                     b.ToTable("Students");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 2,
+                            UserId = 4
+                        });
                 });
 
             modelBuilder.Entity("AlgorithemFinal.Models.TimeTable", b =>
@@ -224,7 +243,7 @@ namespace AlgorithemFinal.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -244,6 +263,9 @@ namespace AlgorithemFinal.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasAlternateKey("Code")
+                        .HasName("AlternateKey_Code");
+
                     b.ToTable("Users");
 
                     b.HasData(
@@ -252,9 +274,36 @@ namespace AlgorithemFinal.Migrations
                             Id = 1,
                             AdminId = 1,
                             Code = "975361004",
-                            FirstName = "Masoud",
-                            LastName = "Poorghaffar",
-                            Password = "test"
+                            FirstName = "مسعود",
+                            LastName = "پورغفار اقدم",
+                            Password = "$2a$11$qMKWWpZvH7qOJwjFqcrMIO.F93tn0.Zm4ZPgf9gucrbDMLp/cgdSy"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "965361004",
+                            FirstName = "ریحانه",
+                            LastName = "زهرابی",
+                            MasterId = 1,
+                            Password = "$2a$11$HKkcFDNLL2bgZpPo2UxHcuZ.wksP1qzbNHt5tEGMk5ZDyqwrzKH2W"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "985361004",
+                            FirstName = "نرگس",
+                            LastName = "میرزایی",
+                            Password = "$2a$11$SQPeuWLFLP3DPUsZO7mHMOsYiKgNvvP6/E3OXFDDOHpjBJuvRHvUC",
+                            StudentId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "985361003",
+                            FirstName = "طاها",
+                            LastName = "علیپور",
+                            Password = "$2a$11$SFve9ALNggK1I19J35qpSu40QPobLf4KMLBFCLbvbCo.r8KuClSN6",
+                            StudentId = 2
                         });
                 });
 

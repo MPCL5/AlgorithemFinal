@@ -15,6 +15,6 @@ namespace AlgorithemFinal.Models.Requests
 
         public string Code { get; set; }
 
-        public string Rule { get; set; }
+        public string Role { get; set; }
     }
 }

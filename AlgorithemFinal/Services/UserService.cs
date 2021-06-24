@@ -1,17 +1,15 @@
-﻿using AlgorithemFinal.Models;
-using AlgorithemFinal.Models.Requests;
-using AlgorithemFinal.Models.Response;
-using AlgorithemFinal.Utiles;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
+using AlgorithemFinal.Models;
+using AlgorithemFinal.Models.Requests;
+using AlgorithemFinal.Models.Response;
+using AlgorithemFinal.Utiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AlgorithemFinal.Services
 {
@@ -31,24 +29,25 @@ namespace AlgorithemFinal.Services
 
         public UserService(IOptions<ComponentConfig> componentConfig, AfDbContext soNetContext)
         {
-            this._config = componentConfig.Value;
-            this._dbContext = soNetContext;
+            _config = componentConfig.Value;
+            _dbContext = soNetContext;
         }
 
         public AuthResponse Authenticate(AuthRequest model)
         {
             var user = _dbContext.Users
                 .Include(user => user.Admin)
-                .FirstOrDefault(x => x.Code == model.Code && x.Password == model.Password);
-            //var user = _users.SingleOrDefault(x => x.Username == model.Username && x.Password == model.Password);
+                .Include(user => user.Master)
+                .Include(user => user.Student)
+                .FirstOrDefault(x => x.Code == model.Code);
 
             // return null if user not found
-            if (user == null) return null;
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Password)) return null;
 
             // authentication successful so generate jwt token
             var token = GenerateJwtToken(user);
 
-            return new AuthResponse() { User = user, Token = token, ExpireAt = DateTime.UtcNow.AddDays(7) };
+            return new AuthResponse {User = user, Token = token, ExpireAt = DateTime.UtcNow.AddDays(7)};
         }
 
         //public IEnumerable<AuthUser> GetAll()
@@ -60,6 +59,8 @@ namespace AlgorithemFinal.Services
         {
             return _dbContext.Users
                 .Include(user => user.Admin)
+                .Include(user => user.Master)
+                .Include(user => user.Student)
                 .FirstOrDefault(x => x.Id == id);
         }
 
@@ -70,13 +71,13 @@ namespace AlgorithemFinal.Services
             var key = Encoding.ASCII.GetBytes(_config.Jwt.SecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
+                Subject = new ClaimsIdentity(new[] {new Claim("id", user.Id.ToString())}),
                 Expires = DateTime.UtcNow.AddHours(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
     }
-
 }
