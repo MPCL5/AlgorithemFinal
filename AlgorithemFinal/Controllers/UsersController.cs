@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AlgorithemFinal.Models;
 using AlgorithemFinal.Models.Requests;
@@ -105,14 +107,14 @@ namespace AlgorithemFinal.Controllers
         )
         {
             // TODO: comment this guy.
-            return PermissionDenied(msg: "temporary disabled.");
+            // return PermissionDenied(msg: "temporary disabled.");
            var user = (User) HttpContext.Items["User"];
 
            user.FirstName = model.FirstName;
            user.LastName = model.LastName;
            
            
-           var newUser = _context.Users.Update(user);
+           _context.Users.Update(user);
 
            try
            {
@@ -136,15 +138,33 @@ namespace AlgorithemFinal.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost("Profile/ChangePassword")]
-        public IActionResult PostUserProfileChangePassword(
-            [FromBody] ProfilePasswordRequest request
+        public async Task<ActionResult> PostUserProfileChangePassword(
+            [FromBody] ProfilePasswordRequest model
         )
         {
             // TODO: comment this guy.
-            return PermissionDenied(msg: "temporary disabled.");
+            // return PermissionDenied(msg: "temporary disabled.");
             var user = (User) HttpContext.Items["User"];
 
-            return Ok(user);
+            if (!BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.Password))
+                return BadRequest(msg: "رمزعبور قیلی شما اشتباه است.");
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            
+            _context.Users.Update(user);
+            
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(user.Id))
+                    return NotFound();
+                throw;
+            }
+
+            return Ok();
         }
 
 
@@ -155,7 +175,7 @@ namespace AlgorithemFinal.Controllers
         public async Task<ActionResult<User>> PutUser(int id, EditUserRequest model)
         {
             // TODO: comment this guy.
-            return PermissionDenied(msg: "temporary disabled.");
+            // return PermissionDenied(msg: "temporary disabled.");
             var user = _userService.GetById(id);
 
             if (user == null) return NotFound();
@@ -181,40 +201,6 @@ namespace AlgorithemFinal.Controllers
             }
         }
 
-        // POST: api/Users
-        /// <summary>
-        ///     برای اضافه کردن کاربر به صورت تکی
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        [Authorize(Policy = new[] {nameof(Admin)})]
-        [HttpPost("Add")]
-        public async Task<ActionResult<User>> PostUser(AddUserRequest user)
-        {
-            //_context.Users.Add(user);
-            //await _context.SaveChangesAsync();
-
-            //return CreatedAtAction("GetUser", new { id = user.Id }, user);
-            return Ok();
-        }
-
-        // POST: api/Users
-        /// <summary>
-        ///     برای اضافه کردن کاربر به صورت گروهی
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        [Authorize(Policy = new[] {nameof(Admin)})]
-        [HttpPost("AddList")]
-        public async Task<ActionResult<User>> PostUserRange(AddUserRequest[] user)
-        {
-            //_context.Users.Add(user);
-            //await _context.SaveChangesAsync();
-
-            //return CreatedAtAction("GetUser", new { id = user.Id }, user);
-            return Ok();
-        }
-
         // DELETE: api/Users/5
         [Authorize(Policy = new[] {nameof(Admin)})]
         [HttpDelete("{id:int}")]
@@ -226,7 +212,84 @@ namespace AlgorithemFinal.Controllers
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
+        }
+
+        // POST: api/Users/Add
+        /// <summary>
+        ///     برای اضافه کردن کاربر به صورت تکی
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [Authorize(Policy = new[] {nameof(Admin)})]
+        [HttpPost("Add")]
+        public async Task<ActionResult<User>> PostUser(AddUserRequest model)
+        {
+            //_context.Users.Add(user);
+            //await _context.SaveChangesAsync();
+            var validationErrors = new List<object>();
+
+            if (model.FirstName == null)
+                validationErrors.Add(new {field = nameof(model.FirstName), message = "نام اجباری می باشد."});
+            if (model.LastName == null)
+                validationErrors.Add(new {field = nameof(model.LastName), message = "نام خانوادگی اجباری می باشد."});
+            if (model.Password == null)
+                validationErrors.Add(new {field = nameof(model.Password), message = "رمز عبور اجباری می باشد."});
+            if (model.Role == null)
+                validationErrors.Add(new {field = nameof(model.Role), message = "نقش اجباری می باشد."});
+            if (model.Code == null)
+                validationErrors.Add(new {field = nameof(model.Code), message = "شماره کاربر اجباری می باشد."});
+
+            if (validationErrors.Count != 0)
+                return BadRequest(data: validationErrors);
+            
+            var user = new User()
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Code = model.Code,
+                Password = BCrypt.Net.BCrypt.HashPassword(model.Password)
+            };
+
+            model.Role = model.Role.ToLower();
+            
+            if (model.Role == nameof(Student).ToLower())
+                user.Student = new Student();
+            else if (model.Role == nameof(Master).ToLower())
+                user.Master = new Master();
+            else
+                return BadRequest(msg: "نقش انتخابی معتبر نمی باشد.");
+            
+            _context.Users.Add(user);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                if (_context.Users.FirstOrDefault(item => item.Code == user.Code) != null) 
+                    return BadRequest(msg: "شماره کاربر تکراری است.");
+                throw;
+            }
+            
+
+            //return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return Ok(user);
+        }
+
+        // POST: api/Users/AddList
+        /// <summary>
+        ///     برای اضافه کردن کاربر به صورت گروهی
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [Authorize(Policy = new[] {nameof(Admin)})]
+        [HttpPost("AddList")]
+        public async Task<ActionResult<User>> PostUserRange(AddUserRequest[] user)
+        {
+            // i'm too lazy for implementing this guty. but u have to do.
+            return PermissionDenied(msg: "temporary disabled.");
         }
 
         private bool UserExists(int id)
