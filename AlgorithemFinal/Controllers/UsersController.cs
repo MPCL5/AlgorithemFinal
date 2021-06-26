@@ -186,19 +186,9 @@ namespace AlgorithemFinal.Controllers
             if (model.Password != null) user.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
             _context.Users.Update(user);
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-
-                return Ok(user);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                    return NotFound();
-                throw;
-            }
+            return Ok(user);
         }
 
         // DELETE: api/Users/5
@@ -230,15 +220,15 @@ namespace AlgorithemFinal.Controllers
             var validationErrors = new List<object>();
 
             if (model.FirstName == null)
-                validationErrors.Add(new {field = nameof(model.FirstName), message = "نام اجباری می باشد."});
+                validationErrors.Add(new ValidationError{Field = nameof(model.FirstName), Message = "نام اجباری می باشد."});
             if (model.LastName == null)
-                validationErrors.Add(new {field = nameof(model.LastName), message = "نام خانوادگی اجباری می باشد."});
+                validationErrors.Add(new ValidationError{Field = nameof(model.LastName), Message = "نام خانوادگی اجباری می باشد."});
             if (model.Password == null)
-                validationErrors.Add(new {field = nameof(model.Password), message = "رمز عبور اجباری می باشد."});
+                validationErrors.Add(new ValidationError{Field = nameof(model.Password), Message = "رمز عبور اجباری می باشد."});
             if (model.Role == null)
-                validationErrors.Add(new {field = nameof(model.Role), message = "نقش اجباری می باشد."});
+                validationErrors.Add(new ValidationError{Field = nameof(model.Role), Message = "نقش اجباری می باشد."});
             if (model.Code == null)
-                validationErrors.Add(new {field = nameof(model.Code), message = "شماره کاربر اجباری می باشد."});
+                validationErrors.Add(new ValidationError{Field = nameof(model.Code), Message = "شماره کاربر اجباری می باشد."});
 
             if (validationErrors.Count != 0)
                 return BadRequest(data: validationErrors);

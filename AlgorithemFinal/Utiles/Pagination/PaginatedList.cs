@@ -26,6 +26,10 @@ namespace AlgorithemFinal.Utiles.Pagination
         public PaginatedResult<T> Result => new()
             {List = this, TotalPages = TotalPages, Page = PageIndex, Count = Count};
 
+        public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, PaginationParams paginationParams)
+        {
+            return await CreateAsync(source, paginationParams.Page, paginationParams.PageSize);
+        }
         public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
         {
             var count = await source.CountAsync();

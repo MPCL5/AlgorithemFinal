@@ -8,9 +8,10 @@ namespace AlgorithemFinal.Models.Requests
 {
     public class BellRequest
     {
-        [Required]
+        //[Required]
         public string Label { get; set; }
 
-        public int BellOfDay { get; set; }
+        // TODO: Override default validator and make this guys not nullable.
+        public int? BellOfDay { get; set; }
     }
 }

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using AlgorithemFinal.Models;
 using AlgorithemFinal.Models.Requests;
+using AlgorithemFinal.Utiles;
 using AlgorithemFinal.Utiles.Extensions;
 using AlgorithemFinal.Utiles.Pagination;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AlgorithemFinal.Controllers
 {
@@ -26,88 +25,85 @@ namespace AlgorithemFinal.Controllers
         // GET: api/Days
         [HttpGet]
         public async Task<ActionResult<PaginatedResult<Day>>> GetDays(
-                [FromQuery] PaginationParams pagination
-            )
+            [FromQuery] PaginationParams pagination
+        )
         {
             //return await _context.Days.ToListAsync();
-            return Ok();
+            var result = _context.Days.AsNoTracking();
+            var resultFinal = await PaginatedList<Day>.CreateAsync(result, pagination);
+
+            return Ok(resultFinal.Result);
         }
 
         // GET: api/Days/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Day>> GetDay(int id)
         {
             var day = await _context.Days.FindAsync(id);
 
-            if (day == null)
-            {
-                return NotFound();
-            }
-
-            return day;
+            return day == null ? NotFound() : Ok(day);
         }
 
         // PUT: api/Days/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDay(int id, [FromBody] DayRequest day)
+        [Authorize(Policy = new[] {nameof(Admin)})]
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> PutDay(int id, [FromBody] DayRequest model)
         {
-            //if (id != day.Id)
-            //{
-            //    return BadRequest();
-            //}
+            var day = _context.Days.FirstOrDefault(item => item.Id == id);
 
-            _context.Entry(day).State = EntityState.Modified;
+            if (day == null)
+                return NotFound();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DayExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            if (model.Label != null)
+                day.Label = model.Label;
+            if (model.DayOfWeek.HasValue)
+                day.DayOfWeek = model.DayOfWeek.GetValueOrDefault();
 
-            return NoContent();
+            _context.Days.Update(day);
+            await _context.SaveChangesAsync();
+
+            return Ok(day);
         }
 
         // POST: api/Days
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Policy = new[] {nameof(Admin)})]
         [HttpPost]
-        public async Task<ActionResult<Day>> PostDay([FromBody] DayRequest day)
+        public async Task<ActionResult<Day>> PostDay([FromBody] DayRequest model)
         {
             //_context.Days.Add(new Day() { DayOfWeek});
             //await _context.SaveChangesAsync();
+            var validationErrors = new List<object>();
 
-            return Ok();
+            if (model.Label == null)
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.Label), Message = "برچسب اجباری میباشید."});
+            if (model.DayOfWeek == null)
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.DayOfWeek), Message = "روز هفته اجباری میباشید."});
+
+            if (validationErrors.Count != 0)
+                return BadRequest(validationErrors);
+
+            var dayToAdd = new Day {Label = model.Label, DayOfWeek = model.DayOfWeek.GetValueOrDefault()};
+            _context.Days.Add(dayToAdd);
+
+            return Ok(dayToAdd);
         }
 
         // DELETE: api/Days/5
-        [HttpDelete("{id}")]
+        [Authorize(Policy = new[] {nameof(Admin)})]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteDay(int id)
         {
             var day = await _context.Days.FindAsync(id);
-            if (day == null)
-            {
-                return NotFound();
-            }
+            if (day == null) return NotFound();
 
             _context.Days.Remove(day);
             await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
-
-        private bool DayExists(int id)
-        {
-            return _context.Days.Any(e => e.Id == id);
+            return Ok();
         }
     }
 }

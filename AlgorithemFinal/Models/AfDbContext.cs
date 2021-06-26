@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace AlgorithemFinal.Models
 {
@@ -107,6 +108,43 @@ namespace AlgorithemFinal.Models
             {
                 Id = 2,
                 UserId = 4
+            });
+
+            var days = new List<string> {"شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه"};
+
+            for (var i = 0; i < days.Count; i++)
+            {
+                modelBuilder.Entity<Day>().HasData(new Day
+                {
+                    Id = i + 1,
+                    Label = days[i],
+                    DayOfWeek = i
+                });
+            }
+
+            modelBuilder.Entity<Bell>().HasData(new Bell
+            {
+                Id = 1,
+                Label = "8-10",
+                BellOfDay = 0
+            });
+            modelBuilder.Entity<Bell>().HasData(new Bell
+            {
+                Id = 2,
+                Label = "10-12",
+                BellOfDay = 1
+            });
+            modelBuilder.Entity<Bell>().HasData(new Bell
+            {
+                Id = 3,
+                Label = "14-16",
+                BellOfDay = 2
+            });
+            modelBuilder.Entity<Bell>().HasData(new Bell
+            {
+                Id = 4,
+                Label = "16-18",
+                BellOfDay = 3
             });
         }
     }
