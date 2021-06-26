@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AlgorithemFinal.Models
 {
-    public class TimeTable
+    public abstract class TimeTable
     {
         public int Id { get; set; }
 
@@ -20,7 +20,7 @@ namespace AlgorithemFinal.Models
         [JsonIgnore]
         public ICollection<Student> Students { get; set; }
 
-        [JsonIgnore]
+        // [JsonIgnore]
         public ICollection<TimeTableBell> TimeTableBells { get; set; }
 
         //[Required]
