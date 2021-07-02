@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AlgorithemFinal.Models
 {
-    public abstract class TimeTable
+    public class TimeTable
     {
         public int Id { get; set; }
 

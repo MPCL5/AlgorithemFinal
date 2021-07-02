@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AlgorithemFinal.Models;
@@ -88,7 +87,6 @@ namespace AlgorithemFinal.Controllers
         [HttpGet("Profile")]
         public ActionResult<User> GetUserProfile()
         {
-            // var user = (User)_httpContext.Items["User"];
             var user = (User) HttpContext.Items["User"];
 
             return Ok(user);
@@ -106,28 +104,16 @@ namespace AlgorithemFinal.Controllers
             [FromBody] ProfileRequest model
         )
         {
-            // TODO: comment this guy.
-            // return PermissionDenied(msg: "temporary disabled.");
-           var user = (User) HttpContext.Items["User"];
+            var user = (User) HttpContext.Items["User"];
 
-           user.FirstName = model.FirstName;
-           user.LastName = model.LastName;
-           
-           
-           _context.Users.Update(user);
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
 
-           try
-           {
-               await _context.SaveChangesAsync();
-           }
-           catch (DbUpdateConcurrencyException)
-           {
-               if (!UserExists(user.Id))
-                   return NotFound();
-               throw;
-           }
 
-           return Ok(user);
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            
+            return Ok(user);
         }
 
         // POST: api/Users/Profile/ChangePassword
@@ -142,27 +128,15 @@ namespace AlgorithemFinal.Controllers
             [FromBody] ProfilePasswordRequest model
         )
         {
-            // TODO: comment this guy.
-            // return PermissionDenied(msg: "temporary disabled.");
             var user = (User) HttpContext.Items["User"];
 
             if (!BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.Password))
                 return BadRequest(msg: "رمزعبور قیلی شما اشتباه است.");
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
-            
+
             _context.Users.Update(user);
-            
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(user.Id))
-                    return NotFound();
-                throw;
-            }
+            await _context.SaveChangesAsync();
 
             return Ok();
         }
@@ -220,20 +194,24 @@ namespace AlgorithemFinal.Controllers
             var validationErrors = new List<object>();
 
             if (model.FirstName == null)
-                validationErrors.Add(new ValidationError{Field = nameof(model.FirstName), Message = "نام اجباری می باشد."});
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.FirstName), Message = "نام اجباری می باشد."});
             if (model.LastName == null)
-                validationErrors.Add(new ValidationError{Field = nameof(model.LastName), Message = "نام خانوادگی اجباری می باشد."});
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.LastName), Message = "نام خانوادگی اجباری می باشد."});
             if (model.Password == null)
-                validationErrors.Add(new ValidationError{Field = nameof(model.Password), Message = "رمز عبور اجباری می باشد."});
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.Password), Message = "رمز عبور اجباری می باشد."});
             if (model.Role == null)
-                validationErrors.Add(new ValidationError{Field = nameof(model.Role), Message = "نقش اجباری می باشد."});
+                validationErrors.Add(new ValidationError {Field = nameof(model.Role), Message = "نقش اجباری می باشد."});
             if (model.Code == null)
-                validationErrors.Add(new ValidationError{Field = nameof(model.Code), Message = "شماره کاربر اجباری می باشد."});
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.Code), Message = "شماره کاربر اجباری می باشد."});
 
             if (validationErrors.Count != 0)
-                return BadRequest(data: validationErrors);
-            
-            var user = new User()
+                return BadRequest(validationErrors);
+
+            var user = new User
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -242,14 +220,14 @@ namespace AlgorithemFinal.Controllers
             };
 
             model.Role = model.Role.ToLower();
-            
+
             if (model.Role == nameof(Student).ToLower())
                 user.Student = new Student();
             else if (model.Role == nameof(Master).ToLower())
                 user.Master = new Master();
             else
                 return BadRequest(msg: "نقش انتخابی معتبر نمی باشد.");
-            
+
             _context.Users.Add(user);
 
             try
@@ -258,11 +236,11 @@ namespace AlgorithemFinal.Controllers
             }
             catch (DbUpdateException e)
             {
-                if (_context.Users.FirstOrDefault(item => item.Code == user.Code) != null) 
+                if (await _context.Users.FirstOrDefaultAsync(item => item.Code == user.Code) != null)
                     return BadRequest(msg: "شماره کاربر تکراری است.");
                 throw;
             }
-            
+
 
             //return CreatedAtAction("GetUser", new { id = user.Id }, user);
             return Ok(user);

@@ -8,9 +8,9 @@ namespace AlgorithemFinal.Models.Requests
 {
     public class CourseRequest
     {
-        [Required]
+        // [Required]
         public string Title { get; set; }
 
-        public int UnitsCount { get; set; }
+        public int? UnitsCount { get; set; }
     }
 }

@@ -113,14 +113,12 @@ namespace AlgorithemFinal.Models
             var days = new List<string> {"شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه"};
 
             for (var i = 0; i < days.Count; i++)
-            {
                 modelBuilder.Entity<Day>().HasData(new Day
                 {
                     Id = i + 1,
                     Label = days[i],
                     DayOfWeek = i
                 });
-            }
 
             modelBuilder.Entity<Bell>().HasData(new Bell
             {
@@ -145,6 +143,27 @@ namespace AlgorithemFinal.Models
                 Id = 4,
                 Label = "16-18",
                 BellOfDay = 3
+            });
+
+            modelBuilder.Entity<Course>().HasData(new Course
+            {
+                Id = 1,
+                Title = "طراحی الگوریتم",
+                UnitsCount = 3
+            });
+
+            modelBuilder.Entity<Course>().HasData(new Course
+            {
+                Id = 2,
+                Title = "ساختمان داده ها",
+                UnitsCount = 3
+            });
+
+            modelBuilder.Entity<Course>().HasData(new Course
+            {
+                Id = 3,
+                Title = "برنامه سازی پیشرفته",
+                UnitsCount = 3
             });
         }
     }

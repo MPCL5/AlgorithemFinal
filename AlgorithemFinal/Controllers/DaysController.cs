@@ -50,7 +50,7 @@ namespace AlgorithemFinal.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutDay(int id, [FromBody] DayRequest model)
         {
-            var day = _context.Days.FirstOrDefault(item => item.Id == id);
+            var day =  await _context.Days.FindAsync(id);
 
             if (day == null)
                 return NotFound();
@@ -72,8 +72,6 @@ namespace AlgorithemFinal.Controllers
         [HttpPost]
         public async Task<ActionResult<Day>> PostDay([FromBody] DayRequest model)
         {
-            //_context.Days.Add(new Day() { DayOfWeek});
-            //await _context.SaveChangesAsync();
             var validationErrors = new List<object>();
 
             if (model.Label == null)
@@ -88,6 +86,8 @@ namespace AlgorithemFinal.Controllers
 
             var dayToAdd = new Day {Label = model.Label, DayOfWeek = model.DayOfWeek.GetValueOrDefault()};
             _context.Days.Add(dayToAdd);
+
+            await _context.SaveChangesAsync();
 
             return Ok(dayToAdd);
         }

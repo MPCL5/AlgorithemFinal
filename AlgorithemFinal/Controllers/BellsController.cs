@@ -49,7 +49,7 @@ namespace AlgorithemFinal.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutBell(int id, [FromBody] BellRequest model)
         {
-            var bell = _context.Bells.FirstOrDefault(item => item.Id == id);
+            var bell = await _context.Bells.FindAsync(id);
 
             if (bell == null) return NotFound();
 
