@@ -71,11 +71,13 @@ namespace AlgorithemFinal.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.AsNoTracking()
+                .Include(x => x.Admin)
+                . Include(x => x.Master)
+                .Include(x => x.Student)
+                .FirstOrDefaultAsync(item => item.Id == id);
 
-            if (user == null) return NotFound();
-
-            return user;
+            return user == null ? NotFound() : Ok(user);
         }
 
         // GET: api/Users/Profile
