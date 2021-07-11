@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -30,5 +31,13 @@ namespace AlgorithemFinal.Models
 
         [JsonIgnore]
         public TimeTable TimeTable { get; set; }
+
+        [NotMapped]
+        public bool HaveCourse => TimeTable != null;
+
+        [JsonIgnore]
+        public int MasterId { get; set; }
+        
+        public Master Master { get; set; }
     }
 }

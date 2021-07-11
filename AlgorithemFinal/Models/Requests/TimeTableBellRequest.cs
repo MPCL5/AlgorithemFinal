@@ -11,14 +11,14 @@ namespace AlgorithemFinal.Models.Requests
         /// <summary>
         /// id rouz
         /// </summary>
-        [Required]
-        public int DayId { get; set; }
+        // [Required]
+        public int? DayId { get; set; }
 
         /// <summary>
         /// id zang
         /// </summary>
-        [Required]
-        public int BellId { get; set; }
+        // [Required]
+        public int? BellId { get; set; }
 
         ///// <summary>
         ///// id dars
@@ -26,6 +26,6 @@ namespace AlgorithemFinal.Models.Requests
         //[Required]
         //public int CourseId { get; set; }
 
-        public int TimeTableId { get; set; }
+        // public int TimeTableId { get; set; }
     }
 }

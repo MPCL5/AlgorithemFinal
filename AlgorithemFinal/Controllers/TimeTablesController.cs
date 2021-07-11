@@ -79,7 +79,7 @@ namespace AlgorithemFinal.Controllers
                 [FromQuery] int maxClassPerBell
             )
         {
-            return Ok();
+            return Ok(msg:"Proccess started!");
         }
 
         private bool TimeTableExists(int id)

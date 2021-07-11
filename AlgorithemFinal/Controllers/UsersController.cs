@@ -227,6 +227,8 @@ namespace AlgorithemFinal.Controllers
                 user.Student = new Student();
             else if (model.Role == nameof(Master).ToLower())
                 user.Master = new Master();
+            else if (model.Role == nameof(Admin).ToLower())
+                user.Admin = new Admin();
             else
                 return BadRequest(msg: "نقش انتخابی معتبر نمی باشد.");
 

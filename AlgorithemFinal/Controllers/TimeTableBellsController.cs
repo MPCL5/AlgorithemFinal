@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AlgorithemFinal.Models;
 using AlgorithemFinal.Utiles.Extensions;
 using AlgorithemFinal.Models.Requests;
+using AlgorithemFinal.Utiles;
 using AlgorithemFinal.Utiles.Pagination;
 
 namespace AlgorithemFinal.Controllers
@@ -24,74 +25,96 @@ namespace AlgorithemFinal.Controllers
         }
 
         // GET: api/TimeTableBells
+        [Authorize(Policy = new []{nameof(Master), nameof(Admin)})]
         [HttpGet]
         public async Task<ActionResult<PaginatedResult<TimeTableBell>>> GetTimeTableBells(
                 [FromQuery] PaginationParams pagination
             )
         {
-            // return await _context.TimeTableBells.ToListAsync();
-            return Ok();
+            var user = (User) HttpContext.Items["User"];
+
+            var result = _context.TimeTableBells.AsNoTracking();
+
+            result = result
+                .Include(item => item.Day)
+                .Include(item => item.Bell);
+                // .Include(item => item.Master);
+
+                if (user.Role == nameof(Master).ToLower())
+                    result = result.Where(item => item.MasterId == user.Master.Id);
+                else
+                    result = result.Include(item => item.Master.User);
+
+            var data = await PaginatedList<TimeTableBell>.CreateAsync(result, pagination);
+            
+            return Ok(data.Result);
         }
 
         // GET: api/TimeTableBells/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
+        [Authorize(Policy = new []{nameof(Master), nameof(Admin)})]
         public async Task<ActionResult<TimeTableBell>> GetTimeTableBell(int id)
         {
-            var timeTableBell = await _context.TimeTableBells.FindAsync(id);
+            var timeTableBell = _context.TimeTableBells.AsNoTracking()
+                .Where(item => item.Id == id)
+                .Include(item => item.Master.User)
+                .Select(item => new
+                {
+                    Id = item.Id,
+                    Day = item.Day,
+                    Bell = item.Bell,
+                    Master = item.Master,
+                    TimeTable = item.TimeTable
+                });
 
-            if (timeTableBell == null)
-            {
-                return NotFound();
-            }
-
-            return timeTableBell;
+            return timeTableBell == null ? NotFound() : Ok(timeTableBell);
         }
-
-        // PUT: api/TimeTableBells/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutTimeTableBell(int id, [FromBody] TimeTableBellRequest timeTableBell)
-        //{
-        //    //if (id != timeTableBell.Id)
-        //    //{
-        //    //    return BadRequest();
-        //    //}
-
-        //    _context.Entry(timeTableBell).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!TimeTableBellExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
 
         // POST: api/TimeTableBells
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TimeTableBell>> PostTimeTableBell([FromBody] TimeTableBellRequest timeTableBell)
+        [Authorize(Policy = new []{nameof(Master)})]
+        public async Task<ActionResult<TimeTableBell>> PostTimeTableBell([FromBody] TimeTableBellRequest model)
         {
-            //_context.TimeTableBells.Add(timeTableBell);
-            //await _context.SaveChangesAsync();
+            var validationErrors = new List<ValidationError>();
 
-            //return CreatedAtAction("GetTimeTableBell", new { id = timeTableBell.Id }, timeTableBell);
-            return Ok();
+            if (model.BellId == null)
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.BellId), Message = "زنگ اجباری میباشید."});
+            if (model.DayId == null)
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.DayId), Message = "روز اجباری میباشید."});
+
+            if (validationErrors.Count != 0)
+                return BadRequest(validationErrors);
+
+            var day = await _context.Days.FirstOrDefaultAsync(item => item.Id == model.DayId);
+            var bell = await _context.Bells.FirstOrDefaultAsync(item => item.Id ==model.BellId);
+
+            if (day == null)
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.DayId), Message = "روز موجود نمیباشید."});
+
+            if (bell == null)
+                validationErrors.Add(new ValidationError
+                    {Field = nameof(model.BellId), Message = "زنگ موجود نمیباشید."});
+            
+            if (validationErrors.Count != 0)
+                return BadRequest(validationErrors);
+
+            var user = (User) HttpContext.Items["User"];
+
+            var newData = new TimeTableBell { Bell = bell, Day = day, Master = user.Master};
+            _context.TimeTableBells.Update(newData);
+
+            await _context.SaveChangesAsync();
+            
+            return Ok(newData);
         }
 
         // DELETE: api/TimeTableBells/5
-        [HttpDelete("{id}")]
+        [Authorize(Policy = new []{nameof(Master), nameof(Admin)})]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteTimeTableBell(int id)
         {
             var timeTableBell = await _context.TimeTableBells.FindAsync(id);
@@ -104,11 +127,6 @@ namespace AlgorithemFinal.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool TimeTableBellExists(int id)
-        {
-            return _context.TimeTableBells.Any(e => e.Id == id);
         }
     }
 }

@@ -31,76 +31,67 @@ namespace AlgorithemFinal.Controllers
                 [FromQuery] int? MasterId,
                 [FromQuery] int? TimeTableId,
                 [FromQuery] PaginationParams pagination
-            )   
+            )
         {
+            var result = _context.Announcements.AsNoTracking();
+
+            if (MasterId.HasValue)
+                result = result.Where(x => x.TimeTable.Master.Id == MasterId);
+
+            if (TimeTableId.HasValue)
+                result = result.Where(x => x.TimeTableId == TimeTableId);
+
+            var data = await PaginatedList<Announcement>.CreateAsync(result, pagination);
             
-            //return await _context.Announcements.ToListAsync();
-            return Ok();
+            return Ok(data.Result);
         }
 
         // GET: api/Announcements/5
         [Authorize]
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Announcement>> GetAnnouncement(int id)
         {
-            var announcement = await _context.Announcements.FindAsync(id);
+            var announcement = await _context.Announcements.AsNoTracking()
+                .Include(x => x.TimeTable.Master)
+                .Include(x => x.TimeTable.TimeTableBells)
+                .Include(x => x.TimeTable.Students)
+                .FirstOrDefaultAsync();
 
             if (announcement == null)
             {
                 return NotFound();
             }
 
-            return announcement;
+            return Ok(announcement);
         }
-
-        // PUT: api/Announcements/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[Authorize(Policy = new string[] { nameof(Admin), nameof(Master) })]
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutAnnouncement(int id, [FromBody] AnnouncementRequest announcement)
-        //{
-        //    //if (id != announcement.Id)
-        //    //{
-        //    //    return BadRequest();
-        //    //}
-
-        //    _context.Entry(announcement).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!AnnouncementExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
 
         // POST: api/Announcements
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Policy = new string[] { nameof(Admin), nameof(Master) })]
         [HttpPost]
-        public async Task<ActionResult<Announcement>> PostAnnouncement([FromBody] AnnouncementRequest announcement)
+        public async Task<ActionResult<Announcement>> PostAnnouncement([FromBody] AnnouncementRequest model)
         {
-            //_context.Announcements.Add(announcement);
-            //await _context.SaveChangesAsync();
+            var timeTable = await _context.TimeTables.FindAsync(model.TimeTableId);
 
-            //return CreatedAtAction("GetAnnouncement", new { id = announcement.Id }, announcement);
-            return Ok();
+            if (timeTable == null)
+                return NotFound(msg: "برنامه مورد نطر یافت نشد.");
+            
+            var newData = new Announcement
+            {
+                Message = model.Message,
+                TimeTable = timeTable,
+            };
+
+            _context.Announcements.Add(newData);
+            
+            await _context.SaveChangesAsync();
+
+            return Ok(newData);
         }
 
         // DELETE: api/Announcements/5
         [Authorize(Policy = new string[] { nameof(Admin), nameof(Master) })]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAnnouncement(int id)
         {
             var announcement = await _context.Announcements.FindAsync(id);
@@ -113,11 +104,6 @@ namespace AlgorithemFinal.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool AnnouncementExists(int id)
-        {
-            return _context.Announcements.Any(e => e.Id == id);
         }
     }
 }
